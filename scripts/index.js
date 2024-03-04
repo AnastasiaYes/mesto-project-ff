@@ -1,8 +1,9 @@
-let cardNodes = initialCards.map(function (cardData) {
-    return generateCardNode(cardData);
+const placesList = document.querySelector('.places__list');
+initialCards.forEach(function (cardData) {
+    const node = generateCardNode(cardData);
+    placesList.append(node);
 })
 
-addCardsToHtml(cardNodes)
 function generateCardNode(cardData) {
     const cardTemplate = document.querySelector('#card-template').content;
     const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
@@ -13,10 +14,6 @@ function generateCardNode(cardData) {
     cardElement.querySelector('.card__delete-button').addEventListener('click', removeCard)
 
     return cardElement;
-}
-function addCardsToHtml(nodes) {
-    const placesList = document.querySelector('.places__list');
-    placesList.append(...nodes);
 }
 
 function removeCard(event) {
