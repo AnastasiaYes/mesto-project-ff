@@ -1,3 +1,6 @@
+import {initialCards} from './cards';
+import './styles/index.css'
+
 const placesList = document.querySelector('.places__list');
 initialCards.forEach(function (cardData) {
     const node = generateCardNode(cardData);
