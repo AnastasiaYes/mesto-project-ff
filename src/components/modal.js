@@ -10,10 +10,11 @@ const profileDescription = document.querySelector('.profile__description');
 export function onModalPlacesSubmit(evt) {
     evt.preventDefault();
 
-    const popup = evt.currentTarget.closest('.popup');
-    closePopup(popup);
     const card = generateCardNode(formNewPlace.elements.link.value, formNewPlace.elements['place-name'].value, removeCard, likeCard, clickImg);
     placesList.prepend(card);
+
+    const popup = evt.currentTarget.closest('.popup');
+    closePopup(popup);
 }
 
 export function openPopup(popup) {
