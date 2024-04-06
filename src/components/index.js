@@ -2,25 +2,18 @@ import '../styles/index.css'
 import {
     addEventListenersForClose,
     addEventListenersForOpen, formEditProfile,
-    formNewPlace, handleFormSubmit,
+    formNewPlace, handleEditProfileFormSubmit,
     onModalPlacesSubmit
 } from "./modal";
-import {generateCardNode, initialCards, placesList} from "./cards";
+import {clickImg, generateCardNode, initialCards, likeCard, placesList, removeCard} from "./cards";
 
 initialCards.forEach(function (cardData) {
-    const node = generateCardNode(cardData.link, cardData.name);
+    const node = generateCardNode(cardData.link, cardData.name, removeCard, likeCard, clickImg);
     placesList.append(node);
 });
 
-placesList.addEventListener('click', function (evt) {
-    if (!evt.target.classList.contains('card__like-button')) {
-        return;
-    }
 
-    evt.target.classList.toggle('card__like-button_is-active');
-});
-
-formEditProfile.addEventListener('submit', handleFormSubmit);
+formEditProfile.addEventListener('submit', handleEditProfileFormSubmit);
 formNewPlace.addEventListener('submit', onModalPlacesSubmit);
 
 addEventListenersForOpen();

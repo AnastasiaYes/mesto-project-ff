@@ -1,3 +1,5 @@
+import {fillModalImageWithCaption, openPopup} from "./modal";
+
 export const initialCards = [
     {
         name: "Архыз",
@@ -31,16 +33,45 @@ export function removeCard(cardContainer) {
     cardContainer.remove();
 }
 
-export function generateCardNode(link, name) {
+export function generateCardNode(link, name, removeCardFunction, likeCardFunction, clickCardFunction) {
     const cardTemplate = document.querySelector('#card-template').content;
     const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
+    const cardImg = cardElement.querySelector('.card__image')
 
-    cardElement.querySelector('.card__image').src = link;
-    cardElement.querySelector('.card__image').alt = name;
+    cardImg.src = link;
+    cardImg.alt = name;
     cardElement.querySelector('.card__title').textContent = name;
-    cardElement.querySelector('.card__delete-button').addEventListener('click', (evt) => {
-        removeCard(evt.currentTarget.closest('.card'));
+    cardElement.querySelector('.card__delete-button').addEventListener('click', () => {
+        if (removeCardFunction) {
+            removeCardFunction(cardElement)
+        }
+    })
+    cardElement.querySelector('.card__like-button').addEventListener('click', () => {
+        if (likeCardFunction) {
+            likeCardFunction(cardElement)
+        }
     })
 
+    if (clickCardFunction) {
+        cardImg.addEventListener('click', clickCardFunction);
+    }
+
     return cardElement;
+}
+
+export function likeCard(cardEl) {
+    const btn = cardEl.querySelector('.card__like-button');
+    if (!btn) {
+        return;
+    }
+
+    cardEl.classList.toggle('card__like-button_is-active');
+}
+
+export function clickImg(evt) {
+    const popup = document.querySelector('.popup.popup_type_image');
+    const srcImg = evt.currentTarget.getAttribute('src');
+    const titleImg = evt.currentTarget.getAttribute('alt');
+    fillModalImageWithCaption(srcImg, titleImg);
+    openPopup(popup)
 }

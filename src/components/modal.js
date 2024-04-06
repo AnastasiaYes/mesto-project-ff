@@ -1,4 +1,4 @@
-import {generateCardNode, placesList} from "./cards";
+import {clickImg, generateCardNode, likeCard, placesList, removeCard} from "./cards";
 
 export const formNewPlace = document.forms['new-place'];
 export const formEditProfile = document.forms['edit-profile'];
@@ -10,7 +10,9 @@ const profileDescription = document.querySelector('.profile__description');
 export function onModalPlacesSubmit(evt) {
     evt.preventDefault();
 
-    const card = generateCardNode(formNewPlace.elements.link.value, formNewPlace.elements['place-name'].value);
+    const popup = evt.currentTarget.closest('.popup');
+    closePopup(popup);
+    const card = generateCardNode(formNewPlace.elements.link.value, formNewPlace.elements['place-name'].value, removeCard, likeCard, clickImg);
     placesList.prepend(card);
 }
 
@@ -20,9 +22,15 @@ export function openPopup(popup) {
     document.addEventListener('keydown', keyHandler)
 }
 
-export function closePopup(popup) {
+export function closePopup(popup, callback) {
     popup.classList.remove('popup_is-opened');
     document.removeEventListener('keydown', keyHandler)
+
+    const form = popup.querySelector('form');
+    if (!form) {
+        return;
+    }
+    form.reset();
 }
 
 export function keyHandler(evt) {
@@ -36,13 +44,13 @@ export function keyHandler(evt) {
 export function fillModalImageWithCaption(imgUrl, caption) {
     const popup = document.querySelector('.popup.popup_type_image');
     popup.querySelector('.popup__image').src = imgUrl;
+    popup.querySelector('.popup__image').alt = caption;
     popup.querySelector('.popup__caption').textContent = caption;
 }
 
 export function addEventListenersForOpen() {
     const profileEditButton = document.querySelector('.profile__edit-button');
     const profileAddButton = document.querySelector('.profile__add-button');
-    const cardsImg = document.querySelectorAll('.card__image');
     profileEditButton.addEventListener('click', function () {
         const popup = document.querySelector('.popup.popup_type_edit');
         openPopup(popup);
@@ -54,14 +62,6 @@ export function addEventListenersForOpen() {
         const popup = document.querySelector('.popup.popup_type_new-card');
         openPopup(popup);
     })
-
-    cardsImg.forEach((el) => el.addEventListener('click', function (evt) {
-        const popup = document.querySelector('.popup.popup_type_image');
-        const srcImg = evt.currentTarget.getAttribute('src');
-        const titleImg = evt.currentTarget.getAttribute('alt');
-        fillModalImageWithCaption(srcImg, titleImg);
-        openPopup(popup)
-    }));
 }
 
 export function addEventListenersForClose() {
@@ -78,28 +78,22 @@ export function addEventListenersForClose() {
 
     popupsClose.forEach((popupClose) => popupClose.addEventListener('click', closePopupHandlerByClick));
 
-    document.querySelectorAll('.popup').forEach((el) => el.addEventListener('click', function (evt) {
+    document.querySelectorAll('.popup').forEach((el) => el.addEventListener('click', closePopupByOverlay));
+
+    function closePopupByOverlay (evt) {
         if (!evt.target.classList.contains('popup')) {
             return;
         }
         closePopup(evt.target);
-    }));
-
-    document.querySelectorAll('.popup__button').forEach((el) => el.addEventListener('click', function (evt) {
-        let popup = evt.target;
-        if (!popup.classList.contains('popup')) {
-            popup = evt.currentTarget.closest('.popup_is-opened');
-            if (!popup) {
-                return;
-            }
-        }
-        closePopup(popup);
-    }));
+    }
 }
 
-export function handleFormSubmit(evt) {
+export function handleEditProfileFormSubmit(evt) {
     evt.preventDefault();
 
     profileTitle.textContent = inputNameUser.value;
     profileDescription.textContent = inputDescriptionUser.value;
+
+    const popup = evt.currentTarget.closest('.popup');
+    closePopup(popup);
 }
