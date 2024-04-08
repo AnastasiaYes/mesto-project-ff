@@ -1,37 +1,44 @@
-import {clickImg, generateCardNode, likeCard, placesList, removeCard} from "./cards";
+import {generateCardNode, likeCard, removeCard} from "./cards";
 
 export const formNewPlace = document.forms['new-place'];
 export const formEditProfile = document.forms['edit-profile'];
-const inputNameUser = formEditProfile.elements.name;
-const inputDescriptionUser = formEditProfile.elements.description;
-const profileTitle = document.querySelector('.profile__title');
-const profileDescription = document.querySelector('.profile__description');
+export const inputNameUser = formEditProfile.elements.name;
+export const inputDescriptionUser = formEditProfile.elements.description;
+export const profileTitle = document.querySelector('.profile__title');
+export const profileDescription = document.querySelector('.profile__description');
 
-export function onModalPlacesSubmit(evt) {
-    evt.preventDefault();
-
-    const card = generateCardNode(formNewPlace.elements.link.value, formNewPlace.elements['place-name'].value, removeCard, likeCard, clickImg);
-    placesList.prepend(card);
-
-    const popup = evt.currentTarget.closest('.popup');
-    closePopup(popup);
+export function clickImg(evt) {
+    const popup = document.querySelector('.popup.popup_type_image');
+    const srcImg = evt.currentTarget.getAttribute('src');
+    const titleImg = evt.currentTarget.getAttribute('alt');
+    fillModalImageWithCaption(srcImg, titleImg);
+    openPopup(popup)
 }
 
 export function openPopup(popup) {
+    const form = popup.querySelector('form');
+    if (form) {
+        form.reset();
+    }
+
     popup.classList.add('popup_is-animated');
     setTimeout(() => popup.classList.add('popup_is-opened'), 0);
     document.addEventListener('keydown', keyHandler)
 }
 
-export function closePopup(popup, callback) {
+export function closePopup(popup) {
     popup.classList.remove('popup_is-opened');
     document.removeEventListener('keydown', keyHandler)
+}
 
-    const form = popup.querySelector('form');
-    if (!form) {
-        return;
-    }
-    form.reset();
+export function onModalPlacesSubmit(evt, placesList, form) {
+    evt.preventDefault();
+
+    const card = generateCardNode(form.elements.link.value, form.elements['place-name'].value, removeCard, likeCard, clickImg);
+    placesList.prepend(card);
+
+    const popup = evt.currentTarget.closest('.popup');
+    closePopup(popup);
 }
 
 export function keyHandler(evt) {
@@ -39,7 +46,8 @@ export function keyHandler(evt) {
         return;
     }
 
-    closePopup(document.querySelector('.popup.popup_is-opened'));
+    const popup = document.querySelector('.popup.popup_is-opened');
+    closePopup(popup);
 }
 
 export function fillModalImageWithCaption(imgUrl, caption) {
@@ -67,26 +75,8 @@ export function addEventListenersForOpen() {
 
 export function addEventListenersForClose() {
     const popupsClose = document.querySelectorAll('.popup__close');
-
-    function closePopupHandlerByClick(evt) {
-        const popup = evt.currentTarget.closest('.popup_is-opened');
-        if (!popup) {
-            return;
-        }
-
-        closePopup(popup);
-    }
-
     popupsClose.forEach((popupClose) => popupClose.addEventListener('click', closePopupHandlerByClick));
-
     document.querySelectorAll('.popup').forEach((el) => el.addEventListener('click', closePopupByOverlay));
-
-    function closePopupByOverlay (evt) {
-        if (!evt.target.classList.contains('popup')) {
-            return;
-        }
-        closePopup(evt.target);
-    }
 }
 
 export function handleEditProfileFormSubmit(evt) {
@@ -97,4 +87,20 @@ export function handleEditProfileFormSubmit(evt) {
 
     const popup = evt.currentTarget.closest('.popup');
     closePopup(popup);
+}
+
+function closePopupHandlerByClick(evt) {
+    const popup = evt.currentTarget.closest('.popup_is-opened');
+    if (!popup) {
+        return;
+    }
+
+    closePopup(popup);
+}
+
+function closePopupByOverlay (evt) {
+    if (!evt.target.classList.contains('popup')) {
+        return;
+    }
+    closePopup(evt.target);
 }

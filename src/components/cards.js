@@ -1,5 +1,3 @@
-import {fillModalImageWithCaption, openPopup} from "./modal";
-
 export const initialCards = [
     {
         name: "Архыз",
@@ -26,8 +24,6 @@ export const initialCards = [
         link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg",
     }
 ];
-
-export const placesList = document.querySelector('.places__list');
 
 export function removeCard(cardContainer) {
     cardContainer.remove();
@@ -66,12 +62,4 @@ export function likeCard(cardEl) {
     }
 
     cardEl.classList.toggle('card__like-button_is-active');
-}
-
-export function clickImg(evt) {
-    const popup = document.querySelector('.popup.popup_type_image');
-    const srcImg = evt.currentTarget.getAttribute('src');
-    const titleImg = evt.currentTarget.getAttribute('alt');
-    fillModalImageWithCaption(srcImg, titleImg);
-    openPopup(popup)
 }
