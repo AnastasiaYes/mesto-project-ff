@@ -31,6 +31,21 @@ export function closePopup(popup) {
     document.removeEventListener('keydown', keyHandler)
 }
 
+export function keyHandler(evt) {
+    if (evt.key !== 'Escape') {
+        return;
+    }
+
+    const popup = document.querySelector('.popup.popup_is-opened');
+    closePopup(popup);
+}
+
+export function addEventListenersForClose() {
+    const popupsClose = document.querySelectorAll('.popup__close');
+    popupsClose.forEach((popupClose) => popupClose.addEventListener('click', closePopupHandlerByClick));
+    document.querySelectorAll('.popup').forEach((el) => el.addEventListener('click', closePopupByOverlay));
+}
+
 export function onModalPlacesSubmit(evt, placesList, form) {
     evt.preventDefault();
 
@@ -38,15 +53,6 @@ export function onModalPlacesSubmit(evt, placesList, form) {
     placesList.prepend(card);
 
     const popup = evt.currentTarget.closest('.popup');
-    closePopup(popup);
-}
-
-export function keyHandler(evt) {
-    if (evt.key !== 'Escape') {
-        return;
-    }
-
-    const popup = document.querySelector('.popup.popup_is-opened');
     closePopup(popup);
 }
 
@@ -71,12 +77,6 @@ export function addEventListenersForOpen() {
         const popup = document.querySelector('.popup.popup_type_new-card');
         openPopup(popup);
     })
-}
-
-export function addEventListenersForClose() {
-    const popupsClose = document.querySelectorAll('.popup__close');
-    popupsClose.forEach((popupClose) => popupClose.addEventListener('click', closePopupHandlerByClick));
-    document.querySelectorAll('.popup').forEach((el) => el.addEventListener('click', closePopupByOverlay));
 }
 
 export function handleEditProfileFormSubmit(evt) {
