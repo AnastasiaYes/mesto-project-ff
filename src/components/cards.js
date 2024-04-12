@@ -32,22 +32,22 @@ export function removeCard(cardContainer) {
 export function generateCardNode(link, name, removeCardFunction, likeCardFunction, clickCardFunction) {
     const cardTemplate = document.querySelector('#card-template').content;
     const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
-    const cardImg = cardElement.querySelector('.card__image')
+    const cardImg = cardElement.querySelector('.card__image');
 
     cardImg.src = link;
     cardImg.alt = name;
     cardElement.querySelector('.card__title').textContent = name;
-    cardElement.querySelector('.card__delete-button').addEventListener('click', () => {
-        if (removeCardFunction) {
-            removeCardFunction(cardElement)
-        }
-    })
-    cardElement.querySelector('.card__like-button').addEventListener('click', () => {
-        if (likeCardFunction) {
-            likeCardFunction(cardElement)
-        }
-    })
 
+    if (removeCardFunction) {
+        cardElement.querySelector('.card__delete-button').addEventListener('click', () => {
+            removeCardFunction(cardElement);
+        })
+    }
+    if (likeCardFunction) {
+        cardElement.querySelector('.card__like-button').addEventListener('click', () => {
+            likeCardFunction(cardElement);
+        })
+    }
     if (clickCardFunction) {
         cardImg.addEventListener('click', clickCardFunction);
     }
@@ -61,5 +61,5 @@ export function likeCard(cardEl) {
         return;
     }
 
-    cardEl.classList.toggle('card__like-button_is-active');
+    btn.classList.toggle('card__like-button_is-active');
 }
