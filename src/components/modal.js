@@ -1,17 +1,4 @@
-export function clickImg(evt, fillModalImageWithCaptionCallback) {
-    const popup = document.querySelector('.popup.popup_type_image');
-    const srcImg = evt.currentTarget.getAttribute('src');
-    const titleImg = evt.currentTarget.getAttribute('alt');
-    fillModalImageWithCaptionCallback(srcImg, titleImg);
-    openPopup(popup)
-}
-
 export function openPopup(popup) {
-    const form = popup.querySelector('form');
-    if (form) {
-        form.reset();
-    }
-
     popup.classList.add('popup_is-animated');
     setTimeout(() => popup.classList.add('popup_is-opened'), 0);
     document.addEventListener('keydown', keyHandler);

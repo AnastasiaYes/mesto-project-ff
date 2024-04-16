@@ -1,11 +1,11 @@
 import '../styles/index.css'
 import {
     addEventListenersForClose,
-    clickImg,
     closePopup,
     openPopup
 } from "./modal";
-import {generateCardNode, initialCards, likeCard, removeCard} from "./cards";
+import {generateCardNode, likeCard, removeCard} from "./card";
+import {initialCards} from "./cards";
 
 const placesList = document.querySelector('.places__list');
 const formNewPlace = document.forms['new-place'];
@@ -14,9 +14,8 @@ const inputNameUser = formEditProfile.elements.name;
 const inputDescriptionUser = formEditProfile.elements.description;
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
-const onImgClickCallback = (evt) => clickImg(evt, fillModalImageWithCaption);
 initialCards.forEach(function (cardData) {
-    const node = generateCardNode(cardData.link, cardData.name, removeCard, likeCard, onImgClickCallback);
+    const node = generateCardNode(cardData.link, cardData.name, removeCard, likeCard, clickImg);
     placesList.append(node);
 });
 
@@ -26,7 +25,7 @@ formNewPlace.addEventListener('submit', (evt) => onModalPlacesSubmit(evt, places
 function onModalPlacesSubmit(evt, placesList, form) {
     evt.preventDefault();
 
-    const card = generateCardNode(form.elements.link.value, form.elements['place-name'].value, removeCard, likeCard, onImgClickCallback);
+    const card = generateCardNode(form.elements.link.value, form.elements['place-name'].value, removeCard, likeCard, clickImg);
     placesList.prepend(card);
 
     const popup = evt.currentTarget.closest('.popup');
@@ -51,6 +50,7 @@ function addEventListenersForOpen() {
     })
 
     profileAddButton.addEventListener('click', function () {
+        formNewPlace.reset();
         const popup = document.querySelector('.popup.popup_type_new-card');
         openPopup(popup);
     })
@@ -66,7 +66,7 @@ function handleEditProfileFormSubmit(evt) {
     closePopup(popup);
 }
 
-export  function closePopupHandlerByClick(evt) {
+export function closePopupHandlerByClick(evt) {
     const popup = evt.currentTarget.closest('.popup_is-opened');
     if (!popup) {
         return;
@@ -75,11 +75,19 @@ export  function closePopupHandlerByClick(evt) {
     closePopup(popup);
 }
 
-export function closePopupByOverlay (evt) {
+export function closePopupByOverlay(evt) {
     if (!evt.target.classList.contains('popup')) {
         return;
     }
     closePopup(evt.target);
+}
+
+export function clickImg(evt) {
+    const popup = document.querySelector('.popup.popup_type_image');
+    const srcImg = evt.currentTarget.getAttribute('src');
+    const titleImg = evt.currentTarget.getAttribute('alt');
+    fillModalImageWithCaption(srcImg, titleImg);
+    openPopup(popup)
 }
 
 addEventListenersForOpen();

@@ -6,7 +6,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
     entry: {
         index: './src/components/index.js',
-        cards: './src/components/cards.js',
+        cards: './src/components/card.js',
         modal: './src/components/modal.js'
     },
     output: {
