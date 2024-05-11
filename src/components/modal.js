@@ -24,3 +24,5 @@ export function addEventListenersForClose(onOverlayClickHandler, onCloseBtnClick
     document.querySelectorAll('.popup').forEach((el) => el.addEventListener('click', onOverlayClickHandler));
 }
 
+
+
