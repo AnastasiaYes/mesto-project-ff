@@ -10,6 +10,7 @@ module.exports = {
         cards: './src/components/cards.js',
         modal: './src/components/modal.js',
         validation: './src/components/validation.js',
+        api: './src/components/api.js'
 
     },
     output: {

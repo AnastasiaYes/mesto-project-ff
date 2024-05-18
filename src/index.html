@@ -14,7 +14,7 @@
   </header>
   <main class="content">
     <section class="profile page__section">
-      <div class="profile__image" style="background-image: url(<%=require('./images/avatar.jpg')%>);"></div>
+      <div class="profile__image profile__edit-avatar-button" style="background-image: url(<%=require('./images/avatar.jpg')%>);"></div>
       <div class="profile__info">
         <h1 class="profile__title">Жак-Ив Кусто</h1>
         <button class="profile__edit-button" type="button"></button>
@@ -49,8 +49,8 @@
       <h3 class="popup__title">Новое место</h3>
       <form class="popup__form" name="new-place" novalidate>
         <input type="text" name="place-name" class="popup__input popup__input_type_card-name" data-validation-regex="^[a-zA-Zа-яА-ЯёЁ\s-]+$" data-error-text="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" placeholder="Название" minlength="2" maxlength="30" required>
-        <input type="url" name="link" class="popup__input popup__input_type_url" data-validation-regex="/https?:\/\/\S+\.\S+/g" data-error-text="Неверная ссылка" placeholder="Ссылка на картинку" required>
-        <button type="submit" class="button popup__button">Сохранить</button>
+        <input type="url" name="link" class="popup__input popup__input_type_url" data-validation-regex="https?:\/\/\S+\.\S+" data-error-text="Неверная ссылка" placeholder="Ссылка на картинку" required>
+        <button type="submit" class="button popup__button" disabled>Сохранить</button>
       </form>
     </div>
   </div>
@@ -63,6 +63,25 @@
   </div>
 </div>
 
+<div class="popup popup_type_avatar-update">
+  <div class="popup__content">
+    <button type="button" class="popup__close"></button>
+    <h3 class="popup__title">Обновить аватар</h3>
+    <form class="popup__form" name="update-avatar" novalidate>
+      <input type="url" name="link" class="popup__input popup__input_type_url" data-validation-regex="https?:\/\/\S+\.\S+" data-error-text="Неверная ссылка" placeholder="Ссылка на картинку" required>
+      <button type="submit" class="button popup__button" disabled>Сохранить</button>
+    </form>
+  </div>
+</div>
+<div class="popup popup_type_image">
+  <div class="popup__content popup__content_content_image">
+    <button type="button" class="popup__close"></button>
+    <img src="" alt="" class="popup__image">
+    <p class="popup__caption"></p>
+  </div>
+</div>
+</div>
+
 <template id="card-template">
   <li class="places__item card">
     <img class="card__image" src="" alt="" />
@@ -70,7 +89,10 @@
     <div class="card__description">
       <h2 class="card__title">
       </h2>
-      <button type="button" class="card__like-button"></button>
+      <div class="like__description">
+        <button type="button" class="card__like-button"></button>
+        <span class="number-likes"></span>
+      </div>
     </div>
   </li>
 </template>

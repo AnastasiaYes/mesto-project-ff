@@ -1,31 +1,102 @@
-/**
- * {
- *     formSelector: '.popup__form',
- *     inputSelector: '.popup__input',
- *     submitButtonSelector: '.popup__button',
- *     inactiveButtonClass: 'popup__button_disabled',
- *     inputErrorClass: 'popup__input_type_error',
- *     errorClass: 'popup__error_visible'
- * }
- * @param config
- */
 export function enableValidation(config) {
-    const form = document.querySelector(config.formSelector);
-    const inputs = form.querySelectorAll(config.inputSelector);
-    inputs.forEach(el => {
-       el.addEventListener('input', (evt) => validateInput(evt.currentTarget, config));
-    });
+    const forms = document.querySelectorAll(config.formSelector);
+    forms.forEach(form => {
+        const inputs = form.querySelectorAll(config.inputSelector);
+        inputs.forEach(el => {
+            el.addEventListener('input', (evt) => validateInput(evt.currentTarget, config));
+        });
+    })
+}
 
-    /**
-     * 1й этап
-     * получаем форму
-     * получаем в форме инпуты.
-     * проходимся по массиву
-     * для каждого элемента массива(инпута) добавляем addEventListener по аналогии с idnex.js
-     *
-     * 2й этап: настройка
-     * когда высвечивается ошибка, то надо span-у добавлять класс, который передан под ключом "errorClass"
-     * когда высвечивается ошибка, то надо инпуту добавлять класс, который передан под ключом "inputErrorClass"
-     * когда высвечивается ошибка, то это значит, что форма не может быть принята. А это значит, что надо отключить кнопку. Кнопку можно найти в форме по классу под ключом "submitButtonSelector".  Класс отключения надо взять из ключа "inactiveButtonClass" и добавить в кнопке
-     */
+function disableFormBtn(submitBtn, inactiveButtonClass) {
+    submitBtn.classList.add(inactiveButtonClass);
+    submitBtn.disabled = true;
+}
+function enableFormBtn(submitBtn, inactiveButtonClass) {
+    submitBtn.classList.remove(inactiveButtonClass);
+    submitBtn.disabled = false;
+}
+
+function showError(input, errorMessage, config) {
+    input.classList.add(config.inputErrorClass);
+
+    disableFormBtn(input.closest('form').querySelector(config.submitButtonSelector), config.inactiveButtonClass);
+    let span = input.nextSibling;
+    if (span.tagName === 'SPAN') {
+        span.textContent = errorMessage;
+        return;
+    }
+
+    span = document.createElement("span")
+    span.classList.add(config.errorClass)
+    span.textContent = errorMessage;
+    input.parentNode.insertBefore(span, input.nextSibling);
+}
+
+function clearError(input, inputErrorClass, config) {
+    input.classList.remove(config.inputErrorClass);
+
+    let span = input.nextSibling;
+    if (span.tagName !== 'SPAN') {
+        return;
+    }
+
+    span.remove();
+}
+
+function isValidByCustomRules(input) {
+    const regular = new RegExp(input.dataset.validationRegex);
+
+    let isValid = false;
+    if (input.value.match(regular)) {
+        isValid = true;
+    }
+
+    return {
+        valid: isValid,
+        message: input.dataset.errorText,
+    }
+}
+
+function validateInput(input, config) {
+    if (!input.validity.valid) {
+        showError(input, input.validationMessage, config)
+        return;
+    }
+
+    const validation = isValidByCustomRules(input);
+    if (!validation.valid) {
+        showError(input, validation.message, config)
+        return;
+    }
+
+    clearError(input, config.inputErrorClass, config);
+    evaluateSubmitButton(input.closest('form'), config);
+}
+
+export function clearValidation(form, config) {
+    const inputs = form.querySelectorAll(config.inputSelector);
+
+    inputs.forEach(input => {
+        clearError(input, config.errorClass, config);
+    })
+
+    evaluateSubmitButton(form, config);
+}
+
+function evaluateSubmitButton(form, config) {
+    const inputs = form.querySelectorAll(config.inputSelector);
+    let isAnyInvalid = false;
+
+    inputs.forEach(input => {
+        if (!input.validity.valid || !isValidByCustomRules(input).valid) {
+            isAnyInvalid = true;
+        }
+    })
+
+    if (isAnyInvalid) {
+        disableFormBtn(form.querySelector(config.submitButtonSelector), config.inactiveButtonClass);
+        return
+    }
+    enableFormBtn(form.querySelector(config.submitButtonSelector), config.inactiveButtonClass)
 }
