@@ -1,3 +1,4 @@
 # Проектная работа Mesto
-https://github.com/AnastasiaYes/mesto-project-ff.git
+**GitHub:** https://github.com/AnastasiaYes/mesto-project-ff.git  
+**Mesto:** https://anastasiayes.github.io/mesto-project-ff/
 
