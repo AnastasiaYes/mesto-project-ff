@@ -18,11 +18,24 @@ export function keyHandler(evt) {
     closePopup(popup);
 }
 
-export function addEventListenersForClose(onOverlayClickHandler, onCloseBtnClickHandler) {
-    const popupsClose = document.querySelectorAll('.popup__close');
-    popupsClose.forEach((popupClose) => popupClose.addEventListener('click', onCloseBtnClickHandler));
-    document.querySelectorAll('.popup').forEach((el) => el.addEventListener('click', onOverlayClickHandler));
+export function closePopupHandlerByClick(evt) {
+    const popup = evt.currentTarget.closest('.popup_is-opened');
+    if (!popup) {
+        return;
+    }
+
+    closePopup(popup);
 }
 
+export function closePopupByOverlay(evt) {
+    if (!evt.target.classList.contains('popup')) {
+        return;
+    }
+    closePopup(evt.target);
+}
 
-
+export function addEventListenersForClose() {
+    const popupsClose = document.querySelectorAll('.popup__close');
+    popupsClose.forEach((popupClose) => popupClose.addEventListener('click', closePopupHandlerByClick));
+    document.querySelectorAll('.popup').forEach((el) => el.addEventListener('click', closePopupByOverlay));
+}

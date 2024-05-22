@@ -16,10 +16,15 @@ export function generateCardNode(user, id, ownerId, likedUserIds, name, link, re
     updateCardDataset(cardElement, id, likedUserIds)
     updateCardLikes(cardElement, likedUserIds.length)
     const cardImg = cardElement.querySelector('.card__image');
+    const likeBtn = cardElement.querySelector('.card__like-button');
 
     cardImg.src = link;
     cardImg.alt = name;
     cardElement.querySelector('.card__title').textContent = name;
+
+    if (likedUserIds.includes(userId)) {
+        likeBtn.classList.add('card__like-button_is-active');
+    }
 
     if (ownerId !== userId) {
         cardElement.querySelector('.card__delete-button').remove();
@@ -29,8 +34,8 @@ export function generateCardNode(user, id, ownerId, likedUserIds, name, link, re
         })
     }
     if (likeCardFunction) {
-        cardElement.querySelector('.card__like-button').addEventListener('click', () => {
-            likeCardFunction(cardElement, user._id);
+        likeBtn.addEventListener('click', () => {
+            likeCardFunction(likeBtn, user._id);
         })
     }
     if (clickCardFunction) {
@@ -40,15 +45,11 @@ export function generateCardNode(user, id, ownerId, likedUserIds, name, link, re
     return cardElement;
 }
 
-export function likeCard(cardEl, userId) {
-    const btn = cardEl.querySelector('.card__like-button');
-    if (!btn) {
-        return;
-    }
-    const card = btn.closest('.card');
-    const cardId = card.dataset.id;
+export function likeCard(btn, userId) {
+    const cardEl = btn.closest('.card');
+    const cardId = cardEl.dataset.id;
 
-    if (card.dataset.like.split(';').includes(userId)) {
+    if (cardEl.dataset.like.split(';').includes(userId)) {
         removeLike(cardId).then(res => {
              btn.classList.remove('card__like-button_is-active');
             updateCardDataset(cardEl, res._id, res.likes.map(row => row._id))

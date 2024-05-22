@@ -1,5 +1,5 @@
 import '../styles/index.css'
-import {addEventListenersForClose, closePopup, openPopup} from "./modal";
+import {addEventListenersForClose, closePopup, openPopup, closePopupByOverlay, closePopupHandlerByClick} from "./modal";
 import {generateCardNode, likeCard, removeCard} from "./card";
 import {clearValidation, enableValidation} from "./validation";
 import {addCard, editAvatar, editProfile, getCards, getUser} from "./api";
@@ -22,23 +22,39 @@ const validationConfig = {
     errorClass: 'popup__error_visible'
 };
 
-getUser().then((result) => {
-    profileTitle.textContent = result.name;
-    profileDescription.textContent = result.about;
-    user = result;
-    document.querySelector('.profile__image').style.backgroundImage = `url("${result.avatar}")`;
-}) .catch((err) => {
-    console.log('Ошибка. Запрос не выполнен: ', err);
-});
+// getUser().then((result) => {
+//     profileTitle.textContent = result.name;
+//     profileDescription.textContent = result.about;
+//     user = result;
+//     document.querySelector('.profile__image').style.backgroundImage = `url("${result.avatar}")`;
+// }) .catch((err) => {
+//     console.log('Ошибка. Запрос не выполнен: ', err);
+// });
+//
+// getCards().then(result => {
+//     result.forEach(function (cardData) {
+//         const node = generateCardNode(user, cardData._id, cardData.owner._id, cardData.likes.map(likeObj => likeObj._id), cardData.name, cardData.link, removeCard, likeCard, clickImg);
+//         placesList.append(node);
+//     })
+// }).catch((err) => {
+//     console.log('Ошибка. Запрос не выполнен: ', err);
+// })
 
-getCards().then(result => {
-    result.forEach(function (cardData) {
-        const node = generateCardNode(user, cardData._id, cardData.owner._id, cardData.likes.map(likeObj => likeObj._id), cardData.name, cardData.link, removeCard, likeCard, clickImg);
-        placesList.append(node);
+Promise.all([getUser(), getCards()])
+    .then(([resultUser, resultCards]) => {
+        profileTitle.textContent = resultUser.name;
+        profileDescription.textContent = resultUser.about;
+        user = resultUser;
+        document.querySelector('.profile__image').style.backgroundImage = `url("${user.avatar}")`;
+
+        resultCards.forEach((cardData) => {
+            const node = generateCardNode(user, cardData._id, cardData.owner._id, cardData.likes.map(likeObj => likeObj._id), cardData.name, cardData.link, removeCard, likeCard, clickImg);
+            placesList.append(node);
+        });
     })
-}).catch((err) => {
-    console.log('Ошибка. Запрос не выполнен: ', err);
-})
+    .catch((err) => {
+        console.error('Ошибка. Запрос не выполнен: ', err);
+    });
 
 
 formEditProfile.addEventListener('submit', handleEditProfileFormSubmit);
@@ -115,6 +131,7 @@ function addEventListenersForOpen() {
         formNewPlace.reset();
         const popup = document.querySelector('.popup.popup_type_new-card');
         openPopup(popup);
+        clearValidation(formNewPlace, validationConfig);
     })
 }
 
@@ -136,22 +153,6 @@ function handleEditProfileFormSubmit(evt) {
     }) .finally(() => buttonPopup.textContent = 'Сохранить');
 }
 
-export function closePopupHandlerByClick(evt) {
-    const popup = evt.currentTarget.closest('.popup_is-opened');
-    if (!popup) {
-        return;
-    }
-
-    closePopup(popup);
-}
-
-export function closePopupByOverlay(evt) {
-    if (!evt.target.classList.contains('popup')) {
-        return;
-    }
-    closePopup(evt.target);
-}
-
 export function clickImg(evt) {
     const popup = document.querySelector('.popup.popup_type_image');
     const srcImg = evt.currentTarget.getAttribute('src');
@@ -161,4 +162,4 @@ export function clickImg(evt) {
 }
 
 addEventListenersForOpen();
-addEventListenersForClose(closePopupByOverlay, closePopupHandlerByClick);
+addEventListenersForClose();
